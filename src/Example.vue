@@ -1,52 +1,70 @@
 <template>
-  <div id="Example">
-    <PhotoUpload :v-show="photo.show"
-                 @click="photo.show = true"
-                 @callback="HelloWorld"
-                 :filename="photo.filename"
-                 :maxWidth=480>
-      上传照片
-    </PhotoUpload>
-    <img ref="b" />
+  <div id="app">
+    <danmaku :data="danmaku"
+             :src="videoUrl"
+             @send="sendDanmaku"
+             :width="1200"></danmaku>
   </div>
 </template>
 
 <script>
-import PhotoUpload from './PhotoUpload'
+import danmaku from './components/danmaku'
 export default {
-  components: { PhotoUpload },
+  components: { danmaku },
   data () {
     return {
-      photo: {
-        show: false,
-        filename: 'abc.jpg',
-      }
+      danmaku: [],
+      videoUrl: 'https://stupid-dragon.oss-cn-beijing.aliyuncs.com/vue-video-danmaku/d.mp4'
     }
   },
+  mounted () { this.getDanmaku() },
   methods: {
-    // 点击"裁剪"之后会调用此方法，blob就是裁剪后的图片
-    HelloWorld (blob) {
-      // 可以把blob放进formdata上传到服务器
-      console.log(blob)
-      // 我这里演示,把blob转成Base64URL然后放在<img>上
-      let a = new FileReader()
-      a.onload = e => {
-        this.$refs.b.src = e.target.result
-      }
-      a.readAsDataURL(blob)
+    getDanmaku () {
+      // 请自己实现从服务器获取弹幕
+      // 这里只是演示性添加
+      this.danmaku = [
+        {
+          content: 'hello world',
+          time: 0,
+          type: 'scroll',
+          color: '#ffffff'
+        },
+        {
+          content: 'Crzy633制作的danmaku插件',
+          time: 0,
+          type: 'scroll',
+          color: '#ffffff'
+        },
+        {
+          content: '基于vue、element-ui、scss',
+          time: 2000,
+          type: 'scroll',
+          color: '#00afff'
+        },
+        {
+          content: '还使用了阿里矢量库图标',
+          time: 2500,
+          type: 'scroll',
+          color: 'green'
+        },
+        {
+          content: 'https://github.com/Crzy633/vue-video-danmaku',
+          time: 7000,
+          type: 'top',
+          color: '#00afff'
+        },
+        {
+          content: '2021/3/20 01:11',
+          time: 5000,
+          type: 'bottom',
+          color: 'golden'
+        }
+      ]
+    },
+    sendDanmaku (danmu) {
+      // 请自己实现将弹幕保存到服务器里边
+      console.log(danmu)
     }
   }
 }
 </script>
-
-<style lang="scss" scoped>
-.photo {
-  width: 160px;
-  height: 90px;
-  line-height: 90px;
-  text-align: center;
-  background: chocolate;
-  border: 1px solid black;
-  border-radius: 3px;
-}
-</style>
