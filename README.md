@@ -2,9 +2,17 @@
 
 基于vuejs2.0 + webpack + scss + element-ui环境使用的视频弹幕
 
-<video src="https://stupid-dragon.oss-cn-beijing.aliyuncs.com/vue-video-danmaku/show.mp4" />
 
 
+![343](https://stupid-dragon.oss-cn-beijing.aliyuncs.com/vue-video-danmaku/343.gif)
+
+（动态演示图片的颜色失真👆）
+
+
+
+
+
+演示链接：https://parva.cool/vue-video-danmaku/
 
 
 
@@ -16,8 +24,8 @@
 
 ----
 
-1. 将下载的两个文件放进自己的项目中
-2. import并将其变成组件
+1. 将下载的两个文件(danmaku.vue、danmakuIcon.js)放进自己的项目中
+2. import danmaku.vue并将其变成组件
 
 ```js
 import danmaku from './danmaku'
@@ -25,7 +33,7 @@ import danmaku from './danmaku'
 components: { danmaku }
 ```
 
-3. 添加组件
+3. 使用组件
 
 ```html
 <danmaku :data="danmaku"

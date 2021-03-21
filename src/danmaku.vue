@@ -330,6 +330,7 @@ export default {
       setTimeout(() => {
         let element = document.querySelector('#' + danmu.id)
         if (!element) return
+        element.style.visibility = 'visible'
         this.calcSeize(danmu, element)
         element.addEventListener('animationend', () => {
           this.list.splice(this.list.indexOf(danmu), 1)
@@ -468,6 +469,7 @@ export default {
   position: absolute;
   width: 100%;
   height: 100%;
+  left: 0;
 }
 .preventClick {
   position: relative;
@@ -544,6 +546,7 @@ export default {
   }
 }
 .danmu {
+  visibility: hidden;
   white-space: nowrap;
   position: absolute;
   display: inline-block;
