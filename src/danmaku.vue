@@ -1,7 +1,7 @@
 <template>
   <div id="danmaku"
-       :class="{ full: controls.full }"
-       :style="'width:' + width + 'px;height:' + height + 'px'">
+       :class="[{ full: controls.full }, { smallScreen }]"
+       :style="danmakuStyle">
     <div class="slot-container">
       <video class="video"
              :src="src"></video>
@@ -35,7 +35,7 @@
                    ';animation: danmaku' + danmu.type + ' linear ' + (((100 - setting.speed) / 5) - (controls.rate - 4) * 0.75) + 's 1 forwards' +
                    ';animation-play-state: ' + aniState">{{danmu.content}}</div>
     </div>
-    <div class="main"
+    <div :class="['main', { smallScreen }]"
          @mousemove="controls.show = 3"
          :style="'bottom:' + (controls.full ? (controls.show > 0 ? '0' : '-99px') : '0')">
       <div class="float-left">
@@ -163,8 +163,8 @@
                       :class="['color', {active: color==='#ffffff'}]"></button>
               <button @click="chooseColor('#00afff')"
                       :class="['color', 'blue', {active: color==='#00afff'}]"></button>
-              <button @click="chooseColor('#800000')"
-                      :class="['color', 'red', {active: color==='#800000'}]"></button>
+              <button @click="chooseColor('#ff0000')"
+                      :class="['color', 'red', {active: color==='#ff0000'}]"></button>
               <button @click="chooseColor('#ffd700')"
                       :class="['color', 'yellow', {active: color==='#ffd700'}]"></button>
               <button @click="chooseColor('#008000')"
@@ -176,7 +176,8 @@
                    @click="send"
                    slot="append">发送</el-button>
       </el-input>
-      <span class="info">
+      <span class="info"
+            v-if="!hideInfo">
         <span v-if="data.length > 0">{{data.length}}条弹幕</span>
       </span>
       <div class="float-right">
@@ -239,10 +240,15 @@ export default {
     width: {
       type: Number,
       default: 600
+    },
+    suit: {
+      type: Boolean,
+      default: true
     }
   },
   data () {
     return {
+      width2: 0,
       height: 0,
       controls: {
         durationTime: 0,
@@ -273,6 +279,8 @@ export default {
           3: '全屏'
         }
       },
+      smallScreen: false,
+      hideInfo: false,
       isPlaying: false,
       lastTimeStamp: 0,
       video: '',
@@ -301,8 +309,6 @@ export default {
     init () {
       let danmaku = document.querySelector('#danmaku')
       if (!danmaku) setTimeout(() => this.init(), 100)
-      // 设置宽高，16：9
-      this.height = this.width * 9 / 16
       // 获取视频标签<video>
       let video = danmaku.querySelector('video')
       if (video === null) throw Error('danmaku: 没有找到嵌入的视频标签!!')
@@ -327,7 +333,27 @@ export default {
         if (resize) resize()
         if (document.fullscreenElement) this.controls.full = true
         else this.controls.full = false
+        this.autoSuitScreen()
       }
+      // 设置宽高，16：9
+      this.width2 = this.width
+      this.height = this.width2 * 9 / 16 + 30
+      this.autoSuitScreen()
+    },
+    // 自适应屏幕
+    autoSuitScreen () {
+      if (this.suit) {
+        if (document.body.clientWidth < this.width2) {
+          this.width2 = document.body.clientWidth
+          this.height = this.width2 * 9 / 16 + 60
+        } else {
+          this.width2 = document.body.clientWidth
+          this.width2 = this.width2 > this.width ? this.width : this.width2
+          this.height = this.width2 * 9 / 16 + 30
+        }
+      }
+      this.hideInfo = this.width2 < 380
+      this.smallScreen = this.width2 < 600
     },
     // 监听video进度改变事件
     timeupdate () {
@@ -485,6 +511,9 @@ export default {
     formatRate () {
       if (this.controls.rate === 4) return '倍速'
       return this.controls.rate / 4 + 'x'
+    },
+    danmakuStyle () {
+      return 'width:' + this.width2 + 'px;height:' + this.height + 'px'
     }
   },
   watch: {
@@ -539,8 +568,8 @@ export default {
   z-index: 3;
   position: absolute;
   width: 100%;
-  height: 30px;
-  bottom: 5px;
+  height: 60px;
+  bottom: -25px;
   & .hoverLine {
     pointer-events: all;
     z-index: -1;
@@ -550,6 +579,7 @@ export default {
     top: 0;
   }
   & .timeLine {
+    opacity: 0.8;
     pointer-events: all;
     position: relative;
     padding: 0 20px;
@@ -792,7 +822,7 @@ export default {
             background: #00afff;
           }
           &.red {
-            background: #800000;
+            background: #ff0000;
           }
           &.yellow {
             background: #ffd700;
@@ -906,17 +936,46 @@ export default {
     }
   }
 }
+.smallScreen {
+  & .controls {
+    height: 90px;
+    bottom: -55px;
+  }
+  & .slot-container {
+    height: calc(100% - 60px);
+  }
+  & .main {
+    height: 60px;
+    & .input {
+      width: calc(100% - 10px);
+      left: 0;
+      bottom: 2px;
+      padding: 0 5px;
+      position: absolute;
+      max-width: 999999px;
+      & .danmaku-tooltip-content {
+        transform: translate(-20px, -100%);
+        &::after {
+          transform: translateX(-75px);
+        }
+      }
+    }
+  }
+}
 .full {
+  & .controls {
+    bottom: 5px;
+  }
   & .slot-container {
     height: 100%;
-  }
-  & .controls {
-    margin-bottom: 30px;
   }
   & .main {
     background: rgba($color: #000000, $alpha: 0.5);
     position: absolute;
     bottom: 0;
+    & .input {
+      background: rgba(black, 0.5);
+    }
   }
 }
 </style>

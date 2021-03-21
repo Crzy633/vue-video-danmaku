@@ -9,7 +9,6 @@
 
 <script>
 import danmaku from './components/danmaku'
-
 export default {
   name: 'App',
   components: { danmaku },

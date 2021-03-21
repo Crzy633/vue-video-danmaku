@@ -40,10 +40,11 @@ components: { danmaku }
 
 # 属性
 
-* data  (Array)			 弹幕资源
-* src (String)				视频Url地址
-* width(Number)		 [可选，默认600] 视频宽度，会按照16:9限制视频高度
-* @send(Function)	  点击发送弹幕之后调用的方法，将弹幕发送到服务器
+* data		  (Array)			 弹幕资源
+* src			 (String)			视频Url地址
+* width		(Number)		 [可选，默认600] 视频宽度，会按照16:9限制视频高度
+* @send      (Function)	     点击发送弹幕之后调用的方法，将弹幕发送到服务器
+* suit			(Boolean)		[可选，默认true] 屏幕宽度小于width时，自适应宽度
 
 
 
