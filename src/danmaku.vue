@@ -845,14 +845,18 @@ export default {
 }
 @keyframes danmakutop {
   0% {
+    border-radius: 0;
   }
   100% {
+    border-radius: 0;
   }
 }
 @keyframes danmakubottom {
   0% {
+    border-radius: 0;
   }
   100% {
+    border-radius: 0;
   }
 }
 </style>
