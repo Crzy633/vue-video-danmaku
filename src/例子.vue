@@ -23,49 +23,14 @@ export default {
   methods: {
     getDanmaku () {
       // 请自己实现从服务器获取弹幕
-      // 这里只是演示性添加
-      this.danmaku = [
-        {
-          content: 'hello world',
-          time: 0,
-          type: 'scroll',
-          color: '#ffffff'
-        },
-        {
-          content: 'Crzy633制作的danmaku插件',
-          time: 0,
-          type: 'scroll',
-          color: '#ffffff'
-        },
-        {
-          content: '基于vue、element-ui、scss',
-          time: 2000,
-          type: 'scroll',
-          color: '#00afff'
-        },
-        {
-          content: '还使用了阿里矢量库图标',
-          time: 2500,
-          type: 'scroll',
-          color: 'green'
-        },
-        {
-          content: 'https://github.com/Crzy633/vue-video-danmaku',
-          time: 7000,
-          type: 'top',
-          color: '#00afff'
-        },
-        {
-          content: '2021/3/20 01:11',
-          time: 5000,
-          type: 'bottom',
-          color: 'golden'
-        }
-      ]
+      this.$axios.get('https://parva.cool/vue-video-danmaku/nodejs?danmaku=1').then(res => {
+        this.danmaku = res.data
+      })
     },
     sendDanmaku (danmu) {
       // 请自己实现将弹幕保存到服务器里边
-      console.log(danmu)
+      danmu = encodeURIComponent(JSON.stringify(danmu))
+      this.$axios.get('https://parva.cool/vue-video-danmaku/nodejs?danmu=' + danmu)
     }
   }
 }
@@ -73,7 +38,7 @@ export default {
 
 <style>
 #app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
+  font-family: "Avenir", Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;

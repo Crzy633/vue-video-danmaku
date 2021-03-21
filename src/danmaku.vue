@@ -32,7 +32,7 @@
            :style="'color:' + danmu.color +
                    ';opacity:' + setting.opacity/100 +
                    ';font-size:' + setting.size + 'px' +
-                   ';animation: danmaku' + danmu.type + ' linear ' + (100 - setting.speed)/5 + 's 1 forwards' +
+                   ';animation: danmaku' + danmu.type + ' linear ' + (((100 - setting.speed) / 5) - (controls.rate - 4) * 0.75) + 's 1 forwards' +
                    ';animation-play-state: ' + aniState">{{danmu.content}}</div>
     </div>
     <div class="main"
@@ -120,6 +120,7 @@
       </span>
       <el-input v-model="input"
                 class="input"
+                :maxlength="50"
                 placeholder="发个弹幕~">
         <span class="tooltip-icon tooltip-icon2"
               slot="prepend">
@@ -178,6 +179,18 @@
         <span v-if="data.length > 0">{{data.length}}条弹幕</span>
       </span>
       <div class="float-right">
+        <span class="tooltip-icon tooltip-icon3 tooltip-icon4">
+          <div class="danmaku-tooltip-content">
+            <el-slider v-model="controls.rate"
+                       class="volumeSlider"
+                       :min="1"
+                       :max="12"
+                       vertical
+                       :show-tooltip="false"
+                       height="130px"></el-slider>
+          </div>
+          <span class="formatRate">{{formatRate}}</span>
+        </span>
         <span class="tooltip-icon tooltip-icon3">
           <div class="danmaku-tooltip-content">
             <el-slider v-model="controls.volume"
@@ -239,7 +252,8 @@ export default {
         volume: 80,
         isDraging: false,
         show: 0,
-        full: false
+        full: false,
+        rate: 4
       },
       input: '',
       type: 'scroll',
@@ -247,7 +261,7 @@ export default {
       setting: {
         onOff: true,
         block: [],
-        opacity: 50,
+        opacity: 70,
         zone: 3,
         speed: 50,
         size: 24,
@@ -272,7 +286,11 @@ export default {
     }
   },
   mounted () {
+    // 初始化
     this.init()
+    // 读取本地保存配置
+    this.read()
+    // 计时器：隐藏视频控件
     setInterval(() => {
       if (this.controls.isDraging) this.controls.show = 3
       else --this.controls.show
@@ -396,6 +414,28 @@ export default {
     sendType (type) {
       this.type = type
     },
+    // 保存配置到本地
+    save () {
+      let save = {
+        setting: this.setting,
+        type: this.type,
+        color: this.color,
+        volume: this.controls.volume,
+        rate: this.controls.rate
+      }
+      localStorage.setItem("danmaku", JSON.stringify(save))
+    },
+    // 读取本地配置
+    read () {
+      let read = localStorage.getItem("danmaku")
+      if (!read) return
+      read = JSON.parse(read)
+      this.setting = read.setting
+      this.type = read.type
+      this.color = read.color
+      this.controls.volume = read.volume
+      this.controls.rate = read.rate
+    },
     /* ----下面是video自定义控件的方法---- */
     // 播放、暂停
     playOrPause () {
@@ -440,9 +480,17 @@ export default {
   computed: {
     aniState () {
       return this.isPlaying ? 'running' : 'paused'
+    },
+    formatRate () {
+      if (this.controls.rate === 4) return '倍速'
+      return this.controls.rate / 4 + 'x'
     }
   },
   watch: {
+    setting: {
+      deep: true,
+      handler () { this.save() }
+    },
     'setting.onOff' (value) {
       if (!value) this.list = []
     },
@@ -453,7 +501,14 @@ export default {
     },
     'controls.volume' (value) {
       this.video.volume = value / 100
-    }
+      this.save()
+    },
+    'controls.rate' (value) {
+      this.video.playbackRate = value / 4
+      this.save()
+    },
+    type () { this.save() },
+    color () { this.save() }
   }
 }
 </script>
@@ -778,6 +833,39 @@ export default {
           height: 10px;
         }
       }
+    }
+  }
+  & .tooltip-icon4 {
+    width: 40px;
+    height: 30px;
+    & .danmaku-tooltip-content {
+      display: absolute;
+      width: 5px;
+      height: 140px;
+      padding: 5px 13px;
+      /deep/ & .el-slider__runway {
+        margin: 0;
+        margin-top: 3px;
+        & .el-slider__bar {
+          background: rgb(224, 132, 90);
+        }
+      }
+      /deep/ & .el-slider__button {
+        width: 7px;
+        height: 7px;
+        border: 2px solid rgb(255, 165, 47);
+        &.hover {
+          width: 10px;
+          height: 10px;
+        }
+        &:active {
+          width: 10px;
+          height: 10px;
+        }
+      }
+    }
+    & .formatRate {
+      cursor: default;
     }
   }
   & .input {
