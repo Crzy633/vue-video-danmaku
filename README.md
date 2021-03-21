@@ -4,23 +4,13 @@
 
 
 
-![343](https://stupid-dragon.oss-cn-beijing.aliyuncs.com/vue-video-danmaku/343.gif)
-
-（动态演示图片的颜色失真👆）
-
-
-
-
-
 演示链接：https://parva.cool/vue-video-danmaku/
-
-
 
 
 
 # 使用方法
 
-### (直接下载后看example 代码更快懂)
+### (建议直接下载文件，看例子代码)
 
 ----
 
