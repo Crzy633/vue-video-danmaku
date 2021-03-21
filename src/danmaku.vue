@@ -121,7 +121,8 @@
       <el-input v-model="input"
                 class="input"
                 :maxlength="50"
-                placeholder="发个弹幕~">
+                placeholder="发个弹幕~"
+                @keyup.enter.native="send">
         <span class="tooltip-icon tooltip-icon2"
               slot="prepend">
           <i class="el-icon-s-open"></i>
